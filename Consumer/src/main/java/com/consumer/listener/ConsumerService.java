@@ -36,11 +36,12 @@ public class ConsumerService {
         InfluxdbUtils influxdbUtils = new InfluxdbUtils(influxdbConfig.getUsername(), influxdbConfig.getPassword(),
                 influxdbConfig.getInfluxDBUrl(), influxdbConfig.getDatabase(), "");
         Map<String, String> tags = new HashMap<>();
-        tags.put("id",Integer.toString(student.getId()));
+        studentMapper.insert(student);
+        tags.put("major",student.getMajor());
         Map<String, Object> fields = new HashMap<>();
         fields.put("name", student.getName());
         fields.put("gender", student.getGender());
-        fields.put("major", student.getMajor());
+        fields.put("id", student.getId());
         influxdbUtils.insert("students", tags, fields);
     }
 
@@ -51,11 +52,11 @@ public class ConsumerService {
         for(Student student:students){
             studentMapper.insert(student);
             Map<String, String> tags = new HashMap<>();
-            tags.put("id",Integer.toString(student.getId()));
+            tags.put("major",student.getMajor());
             Map<String, Object> fields = new HashMap<>();
             fields.put("name", student.getName());
             fields.put("gender", student.getGender());
-            fields.put("major", student.getMajor());
+            fields.put("id", student.getId());
             Point point = influxdbUtils.pointBuilder("students", System.currentTimeMillis(),
                     tags, fields);
             BatchPoints batchPoints = BatchPoints.database(influxdbConfig.getDatabase()).tag("id", Integer.toString(student.getId()))
